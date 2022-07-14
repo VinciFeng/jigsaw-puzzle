@@ -31,7 +31,9 @@ public class JigsawPuzzle {
     }
 
     public void solution() {
+        // 遍历地图
 
+        // 获取一张拼图碎片，测试是否能放下，能则继续，不能则转换方向，如果还不能则切换碎片
     }
 
     public static void main(String[] args) {
@@ -40,5 +42,6 @@ public class JigsawPuzzle {
         // jigsawPuzzle.setDate(LocalDate.of(2022, 8, 2));
         jigsawPuzzle.setDateNow();
         jigsawPuzzle.showBoard();
+
     }
 }
