@@ -1,5 +1,6 @@
 package com.vinci.jigsaw.component;
 
+import com.vinci.jigsaw.constant.JigsawLogConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 拼图面板类
  * @author Vinci
  * @date 2022/07/14
  */
@@ -25,17 +27,17 @@ public class JigsawBoard {
 
     private Map<Integer, int[]> dayOfWeeks;
 
-
     /** 构造初始化 */
     public JigsawBoard() {
         // 初始化面板
-        initBoard();
+        initOriginalBoard();
         // 初始化坐标
         initCoordinate();
+        logger.info(JigsawLogConstant.INIT_JIGSAW_BOARD);
     }
 
     /** 拼图面板初始化 */
-    public void initBoard() {
+    public void initOriginalBoard() {
         board = new int[][]{
                 {0, 0, 0, 0, 0, 0, -1},
                 {0, 0, 0, 0, 0, 0, -1},
@@ -46,6 +48,7 @@ public class JigsawBoard {
                 {0, 0, 0, 0, 0, 0, 0},
                 {-1, -1, -1, -1, 0, 0, 0},
         };
+        logger.info(JigsawLogConstant.INIT_ORIGINAL_BOARD);
     }
 
     /** 日期坐标初始化 */
@@ -66,19 +69,11 @@ public class JigsawBoard {
         for (int i = 4; i <= 6; i++) {
             dayOfWeeks.put(i, new int[]{7, i});
         }
-    }
-
-    /** 显示拼图面板 */
-    public void showBoard() {
-        logger.info("==========拼图面板==========");
-        for (int[] line : board) {
-            logger.info("{}", line);
-        }
-        logger.info("==========================");
+        logger.info(JigsawLogConstant.INIT_DATE_COORDINATE);
     }
 
     /** 设置日期占位 */
-    public void setDate() {
+    public void setDateNow() {
         setDate(LocalDate.now());
     }
 
@@ -90,12 +85,15 @@ public class JigsawBoard {
         board[month[0]][month[1]] = -2;
         board[dayOfMonth[0]][dayOfMonth[1]] = -2;
         board[dayOfWeek[0]][dayOfWeek[1]] = -2;
+        logger.info(JigsawLogConstant.FINISHED_DATE_SETTING);
     }
 
-    public static void main(String[] args) {
-        JigsawBoard jigsawBoard = new JigsawBoard();
-        jigsawBoard.showBoard();
-        jigsawBoard.setDate();
-        jigsawBoard.showBoard();
+    /** 显示拼图面板 */
+    public void showBoard() {
+        logger.info(JigsawLogConstant.SHOW_JIGSAW_BOARD_HEAD);
+        for (int[] line : board) {
+            logger.info("{}", line);
+        }
+        logger.info(JigsawLogConstant.SHOW_JIGSAW_BOARD_TAIL);
     }
 }
