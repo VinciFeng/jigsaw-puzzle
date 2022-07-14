@@ -88,6 +88,10 @@ public class JigsawBoard {
         logger.info(JigsawLogConstant.FINISHED_DATE_SETTING);
     }
 
+    public int[][] getBoard() {
+        return board;
+    }
+
     /** 显示拼图面板 */
     public void showBoard() {
         logger.info(JigsawLogConstant.SHOW_JIGSAW_BOARD_HEAD);
