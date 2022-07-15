@@ -1,6 +1,6 @@
 package com.vinci.jigsaw.component;
 
-import com.vinci.jigsaw.constant.JigsawLogConstant;
+import com.vinci.jigsaw.tool.ArrayTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,77 +16,64 @@ public class JigsawPiece {
 
     private static final Logger logger = LoggerFactory.getLogger(JigsawPiece.class);
 
-    private final List<int[][]> pieces;
+    int[][] baseShape;
 
-    public JigsawPiece() {
-        pieces = new ArrayList<>();
-        pieces.add(shape);
-        pieces.add(shape2);
-        pieces.add(shape3);
-        pieces.add(shape4);
-        pieces.add(shape5);
-        pieces.add(shape6);
-        pieces.add(shape7);
-        pieces.add(shape8);
-        pieces.add(shape9);
-        pieces.add(shape10);
-        logger.info(JigsawLogConstant.INIT_JIGSAW_PIECES);
+    List<int[][]> shapes;
+
+    /** 构造方法默认不翻转 */
+    public JigsawPiece(int[][] shape) {
+        this(shape, false);
     }
 
-    public List<int[][]> getPieces() {
-        return pieces;
+    /** 构造方法自定义是否翻转 */
+    public JigsawPiece(int[][] shape, boolean withFlip) {
+        this.baseShape = ArrayTool.deepCopyArray(shape);
+        this.shapes = new ArrayList<>();
+        if (withFlip) {
+            rotateAndFlipJigsawPiece(baseShape);
+        } else {
+            rotateJigsawPiece(baseShape, false);
+        }
     }
 
-    int[][] shape = {
-            {1, 1, 1},
-            {1, 0, 0},
-            {1, 0, 0}
-    };
+    /** 根据输入的shape形状，旋转和翻转拼图碎片的各种形状并保存 */
+    private void rotateAndFlipJigsawPiece(int[][] shape) {
+        // 旋转形状并添加
+        rotateJigsawPiece(shape, false);
+        // 翻转形状再添加一次
+        rotateJigsawPiece(ArrayTool.flip(shape), true);
+    }
 
-    int[][] shape2 = {
-            {1, 1, 0},
-            {0, 1, 0},
-            {0, 1, 1}
-    };
+    /** 根据输入的shape形状，旋转拼图碎片的各种形状并保存 */
+    private void rotateJigsawPiece(int[][] shape, boolean isFlip) {
+        // 添加原始形状，如果是镜像，需要判断是否重复
+        if (!isFlip || !checkRepeat(shape)) {
+            shapes.add(shape);
+        }
+        int[][] next = ArrayTool.deepCopyArray(shape);
+        // 旋转并添加
+        for (int i = 0; i < 3; i++) {
+            next = ArrayTool.rotate(next);
+            // 去重剪枝
+            if (!checkRepeat(next)) {
+                shapes.add(next);
+            }
+        }
+    }
 
-    int[][] shape3 = {
-            {1, 1, 1},
-            {0, 1, 0},
-            {0, 1, 0}
-    };
+    /** 判断该形状是否已存在 */
+    private boolean checkRepeat(int[][] shape) {
+        boolean repeat = false;
+        for (int[][] sh : shapes) {
+            if (ArrayTool.isRepeat(sh, shape)) {
+                repeat = true;
+                break;
+            }
+        }
+        return repeat;
+    }
 
-    int[][] shape4 = {
-            {1, 1, 1, 1},
-            {0, 0, 0, 0}
-    };
-
-    int[][] shape5 = {
-            {1, 1, 1, 1},
-            {1, 0, 0, 0}
-    };
-
-    int[][] shape6 = {
-            {1, 1, 0, 0},
-            {0, 1, 1, 1}
-    };
-
-    int[][] shape7 = {
-            {1, 1, 1},
-            {1, 0, 1}
-    };
-
-    int[][] shape8 = {
-            {1, 1, 0},
-            {0, 1, 1}
-    };
-
-    int[][] shape9 = {
-            {1, 1, 1},
-            {1, 0, 0}
-    };
-
-    int[][] shape10 = {
-            {1, 1, 1},
-            {1, 1, 0}
-    };
+    public List<int[][]> getShapes() {
+        return shapes;
+    }
 }

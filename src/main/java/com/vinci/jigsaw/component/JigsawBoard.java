@@ -1,6 +1,7 @@
 package com.vinci.jigsaw.component;
 
 import com.vinci.jigsaw.constant.JigsawLogConstant;
+import com.vinci.jigsaw.tool.ArrayTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,9 +118,7 @@ public class JigsawBoard {
     /** 显示拼图面板 */
     public void showBoard() {
         logger.info(JigsawLogConstant.SHOW_JIGSAW_BOARD_HEAD);
-        for (int[] line : board) {
-            logger.info("{}", line);
-        }
+        ArrayTool.printArray(board);
         logger.info(JigsawLogConstant.SHOW_JIGSAW_BOARD_TAIL);
     }
 }

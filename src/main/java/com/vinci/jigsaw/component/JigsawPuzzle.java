@@ -1,6 +1,7 @@
 package com.vinci.jigsaw.component;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,11 +13,11 @@ public class JigsawPuzzle {
 
     JigsawBoard jigsawBoard;
 
-    JigsawPiece jigsawPiece;
+    List<JigsawPiece> jigsawPieceList;
 
     public JigsawPuzzle() {
         this.jigsawBoard = new JigsawBoard();
-        this.jigsawPiece = new JigsawPiece();
+        this.jigsawPieceList = new JigsawPieceList().getPieceList();
     }
 
     public void setDate() {
@@ -32,7 +33,6 @@ public class JigsawPuzzle {
     }
 
     public void solution() {
-
 
     }
 
