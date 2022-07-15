@@ -7,15 +7,17 @@ package com.vinci.jigsaw.constant;
  */
 public class JigsawLogConstant {
 
-    public static final String INIT_ORIGINAL_BOARD = "Init original board success.";
+    public static final String INIT_ORIGINAL_BOARD = "Original board initialized successfully.";
 
-    public static final String INIT_DATE_COORDINATE = "Init date coordinate success.";
+    public static final String INIT_WALL = "Wall initialized successfully.";
 
-    public static final String INIT_JIGSAW_BOARD = "Init jigsaw board success.";
+    public static final String INIT_DATE_COORDINATE = "Date coordinate initialized successfully.";
 
-    public static final String INIT_JIGSAW_PIECES = "Init jigsaw pieces success.";
+    public static final String INIT_JIGSAW_BOARD = "Jigsaw board initialized successfully.";
 
-    public static final String FINISHED_DATE_SETTING = "Finished setting the date。";
+    public static final String INIT_JIGSAW_PIECES = "Jigsaw pieces initialized successfully.";
+
+    public static final String FINISHED_DATE_SETTING = "Date set successfully。";
 
     public static final String SHOW_JIGSAW_BOARD_HEAD = "==========Jigsaw Board==========";
 

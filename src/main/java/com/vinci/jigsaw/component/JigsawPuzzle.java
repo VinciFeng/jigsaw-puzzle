@@ -19,8 +19,8 @@ public class JigsawPuzzle {
         this.jigsawPiece = new JigsawPiece();
     }
 
-    public void setDateNow() {
-        jigsawBoard.setDateNow();
+    public void setDate() {
+        jigsawBoard.setDate();
     }
 
     public void setDate(LocalDate date) {
@@ -32,15 +32,7 @@ public class JigsawPuzzle {
     }
 
     public void solution() {
-        // 获取地图
-        int[][] board = jigsawBoard.getBoard();
-        List<int[][]> pieces = jigsawPiece.getPieces();
-        // 遍历地图
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i][j]; j++) {
-                // 获取一张拼图碎片，测试是否能放下，能则继续，不能则转换方向，如果还不能则切换碎片
-            }
-        }
+
 
     }
 
@@ -61,7 +53,7 @@ public class JigsawPuzzle {
         JigsawPuzzle jigsawPuzzle = new JigsawPuzzle();
         jigsawPuzzle.showBoard();
         // jigsawPuzzle.setDate(LocalDate.of(2022, 8, 2));
-        jigsawPuzzle.setDateNow();
+        jigsawPuzzle.setDate();
         jigsawPuzzle.showBoard();
     }
 }

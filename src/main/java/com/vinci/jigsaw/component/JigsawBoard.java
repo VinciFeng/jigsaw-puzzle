@@ -31,7 +31,9 @@ public class JigsawBoard {
     public JigsawBoard() {
         // 初始化面板
         initOriginalBoard();
-        // 初始化坐标
+        // 初始化墙体
+        initWall();
+        // 初始化日期坐标
         initCoordinate();
         logger.info(JigsawLogConstant.INIT_JIGSAW_BOARD);
     }
@@ -39,16 +41,36 @@ public class JigsawBoard {
     /** 拼图面板初始化 */
     public void initOriginalBoard() {
         board = new int[][]{
-                {0, 0, 0, 0, 0, 0, -1},
-                {0, 0, 0, 0, 0, 0, -1},
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},
-                {-1, -1, -1, -1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
         };
         logger.info(JigsawLogConstant.INIT_ORIGINAL_BOARD);
+    }
+
+    // 初始化墙体
+    public void initWall() {
+        int[][] walls = {
+                {0, 6},
+                {1, 6},
+                {7, 0},
+                {7, 1},
+                {7, 2},
+                {7, 3},
+        };
+        initWall(walls);
+    }
+
+    public void initWall(int[][] walls) {
+        for (int[] wall : walls) {
+            board[wall[0]][wall[1]] = 1;
+        }
+        logger.info(JigsawLogConstant.INIT_WALL);
     }
 
     /** 日期坐标初始化 */
@@ -73,7 +95,7 @@ public class JigsawBoard {
     }
 
     /** 设置日期占位 */
-    public void setDateNow() {
+    public void setDate() {
         setDate(LocalDate.now());
     }
 
@@ -82,9 +104,9 @@ public class JigsawBoard {
         int[] month = months.get(date.getMonthValue());
         int[] dayOfMonth = dayOfMonths.get(date.getDayOfMonth());
         int[] dayOfWeek = dayOfWeeks.get(date.getDayOfWeek().getValue());
-        board[month[0]][month[1]] = -2;
-        board[dayOfMonth[0]][dayOfMonth[1]] = -2;
-        board[dayOfWeek[0]][dayOfWeek[1]] = -2;
+        board[month[0]][month[1]] = 1;
+        board[dayOfMonth[0]][dayOfMonth[1]] = 1;
+        board[dayOfWeek[0]][dayOfWeek[1]] = 1;
         logger.info(JigsawLogConstant.FINISHED_DATE_SETTING);
     }
 
