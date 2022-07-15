@@ -21,10 +21,10 @@ public class ArrayTool {
         //
         int row = shape.length;
         int col = shape[0].length;
-        int[][] res = new int[row][col];
+        int[][] res = new int[col][row];
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                res[i][j] = shape[col - 1 - j][i];
+                res[j][row - i - 1] = shape[i][j];
             }
         }
         return res;

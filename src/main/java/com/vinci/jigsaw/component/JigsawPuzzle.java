@@ -1,7 +1,8 @@
 package com.vinci.jigsaw.component;
 
+import com.vinci.jigsaw.tool.ArrayTool;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,9 +16,12 @@ public class JigsawPuzzle {
 
     List<JigsawPiece> jigsawPieceList;
 
+
+
     public JigsawPuzzle() {
         this.jigsawBoard = new JigsawBoard();
         this.jigsawPieceList = new JigsawPieceList().getPieceList();
+        System.out.println("test");
     }
 
     public void setDate() {
@@ -50,10 +54,16 @@ public class JigsawPuzzle {
     }
 
     public static void main(String[] args) {
-        JigsawPuzzle jigsawPuzzle = new JigsawPuzzle();
-        jigsawPuzzle.showBoard();
-        // jigsawPuzzle.setDate(LocalDate.of(2022, 8, 2));
-        jigsawPuzzle.setDate();
-        jigsawPuzzle.showBoard();
+//        JigsawPuzzle jigsawPuzzle = new JigsawPuzzle();
+//        jigsawPuzzle.showBoard();
+//        // jigsawPuzzle.setDate(LocalDate.of(2022, 8, 2));
+//        jigsawPuzzle.setDate();
+//        jigsawPuzzle.showBoard();
+        int[][] shape = {
+                {1, 1, 1},
+                {1, 0, 0},
+                {1, 0, 0}
+        };
+        ArrayTool.printArray(ArrayTool.rotate(shape));
     }
 }
