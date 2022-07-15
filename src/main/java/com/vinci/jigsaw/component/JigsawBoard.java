@@ -96,12 +96,13 @@ public class JigsawBoard {
     }
 
     /** 设置日期占位 */
-    public void setDate() {
+    public JigsawBoard setDate() {
         setDate(LocalDate.now());
+        return this;
     }
 
     /** 设置日期占位 */
-    public void setDate(LocalDate date) {
+    public JigsawBoard setDate(LocalDate date) {
         int[] month = months.get(date.getMonthValue());
         int[] dayOfMonth = dayOfMonths.get(date.getDayOfMonth());
         int[] dayOfWeek = dayOfWeeks.get(date.getDayOfWeek().getValue());
@@ -109,6 +110,7 @@ public class JigsawBoard {
         board[dayOfMonth[0]][dayOfMonth[1]] = 1;
         board[dayOfWeek[0]][dayOfWeek[1]] = 1;
         logger.info(JigsawLogConstant.FINISHED_DATE_SETTING);
+        return this;
     }
 
     public int[][] getBoard() {

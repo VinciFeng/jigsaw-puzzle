@@ -9,20 +9,20 @@ import java.util.List;
  */
 public class JigsawPieceList {
 
-    JigsawPieceBasicShape pieceBasicShape;
+    private JigsawPieceBasicShape pieceBasicShape;
 
-    List<JigsawPiece> pieceList;
+    private List<JigsawPiece> pieceList;
 
     public JigsawPieceList() {
-        this(new JigsawPieceBasicShape(), new ArrayList<>());
+        this(new JigsawPieceBasicShape(), new ArrayList<>(), false);
     }
 
-    public JigsawPieceList(JigsawPieceBasicShape pieceBasicShape, List<JigsawPiece> pieceList) {
+    public JigsawPieceList(JigsawPieceBasicShape pieceBasicShape, List<JigsawPiece> pieceList, boolean withFlip) {
         this.pieceBasicShape = pieceBasicShape;
         this.pieceList = pieceList;
         List<int[][]> pieceShapes = pieceBasicShape.getPieces();
         for (int[][] pieceShape : pieceShapes) {
-            pieceList.add(new JigsawPiece(pieceShape));
+            pieceList.add(new JigsawPiece(pieceShape, withFlip));
         }
     }
 

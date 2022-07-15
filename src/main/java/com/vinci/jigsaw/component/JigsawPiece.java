@@ -16,9 +16,11 @@ public class JigsawPiece {
 
     private static final Logger logger = LoggerFactory.getLogger(JigsawPiece.class);
 
-    int[][] baseShape;
+    private int[][] baseShape;
 
-    List<int[][]> shapes;
+    private List<int[][]> shapes;
+
+    private int shapeId;
 
     /** 构造方法默认不翻转 */
     public JigsawPiece(int[][] shape) {
@@ -75,5 +77,13 @@ public class JigsawPiece {
 
     public List<int[][]> getShapes() {
         return shapes;
+    }
+
+    public int getShapeId() {
+        return shapeId;
+    }
+
+    public void setShapeId(int shapeId) {
+        this.shapeId = shapeId;
     }
 }
