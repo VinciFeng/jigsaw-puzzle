@@ -100,4 +100,12 @@ public class ArrayTool {
         num += dfs(i, j - 1, grid);
         return num;
     }
+
+    /** 左上角有效性检查 */
+    public static boolean checkPiece(int[][] shape) {
+    if (shape[0][0] != 0) {
+            return true;
+        }
+        return false;
+    }
 }

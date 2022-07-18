@@ -26,29 +26,31 @@ public class JigsawPiece {
 
     private int[] coordinate;
 
+    private boolean isUsed;
+
     /** 构造方法默认翻转 */
     public JigsawPiece(int[][] shape) {
-        this(shape, true);
+        this(shape, true, false);
     }
 
     /** 构造方法自定义是否翻转 */
-    public JigsawPiece(int[][] shape, boolean withFlip) {
+    public JigsawPiece(int[][] shape, boolean withFlip, boolean withCheck) {
         this.coordinate = JigsawConstant.DEFAULT_COORDINATE;
         this.baseShape = ArrayTool.deepCopyArray(shape);
         this.shapes = new ArrayList<>();
         if (withFlip) {
-            rotateAndFlipJigsawPiece(baseShape);
+            rotateAndFlipJigsawPiece(baseShape, withCheck);
         } else {
-            rotateJigsawPiece(baseShape, false);
+            rotateJigsawPieceWithCheck(baseShape, false, withCheck);
         }
     }
 
     /** 根据输入的shape形状，旋转和翻转拼图碎片的各种形状并保存 */
-    private void rotateAndFlipJigsawPiece(int[][] shape) {
+    private void rotateAndFlipJigsawPiece(int[][] shape, boolean withCheck) {
         // 旋转形状并添加
-        rotateJigsawPiece(shape, false);
+        rotateJigsawPieceWithCheck(shape, false, withCheck);
         // 翻转形状再添加一次
-        rotateJigsawPiece(ArrayTool.flip(shape), true);
+        rotateJigsawPieceWithCheck(ArrayTool.flip(shape), true, withCheck);
     }
 
     /** 根据输入的shape形状，旋转拼图碎片的各种形状并保存 */
@@ -64,6 +66,36 @@ public class JigsawPiece {
             // 去重剪枝
             if (!checkRepeat(next)) {
                 shapes.add(next);
+            }
+        }
+    }
+
+    private void rotateJigsawPieceWithCheck(int[][] shape, boolean isFlip, boolean checked) {
+        // 添加原始形状，如果是镜像，需要判断是否重复
+        if (!isFlip || !checkRepeat(shape)) {
+            // 如果需要检查，左上角有效性
+            if (checked) {
+                if (ArrayTool.checkPiece(shape)) {
+                    shapes.add(shape);
+                }
+            } else {
+                shapes.add(shape);
+            }
+        }
+        int[][] next = ArrayTool.deepCopyArray(shape);
+        // 旋转并添加
+        for (int i = 0; i < 3; i++) {
+            next = ArrayTool.rotate(next);
+            // 去重剪枝
+            if (!checkRepeat(next)) {
+                // 如果需要检查，左上角有效性
+                if (checked) {
+                    if (ArrayTool.checkPiece(next)) {
+                        shapes.add(next);
+                    }
+                } else {
+                    shapes.add(next);
+                }
             }
         }
     }
@@ -108,6 +140,15 @@ public class JigsawPiece {
 
     public JigsawPiece setCoordinate(int[] coordinate) {
         this.coordinate = coordinate;
+        return this;
+    }
+
+    public boolean isUsed() {
+        return isUsed;
+    }
+
+    public JigsawPiece setUsed(boolean used) {
+        isUsed = used;
         return this;
     }
 

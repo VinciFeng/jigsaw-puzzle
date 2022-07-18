@@ -55,6 +55,11 @@ public class JigsawPuzzle {
         renderDateAndWall();
     }
 
+    public void searchResultScanBoard() {
+        backTrackingByBoard(jigsawBoard.getBoard(), 0, 0);
+        renderDateAndWall();
+    }
+
     public void backTracing(int[][] board, int pieceId, int resultNumber) {
         // 终止条件1，如果遍历完了最后一个拼图
         if (pieceId >= jigsawPieceList.size()) {
@@ -63,9 +68,9 @@ public class JigsawPuzzle {
             return;
         }
         // 终止条件2，判断当前是否有过小的孤岛
-//        if (!ArrayTool.islandChecked(ArrayTool.deepCopyArray(board))) {
-//            return;
-//        }
+        if (!ArrayTool.islandChecked(ArrayTool.deepCopyArray(board))) {
+            return;
+        }
         // 终止条件3，判断是否已经搜索到足够数目的结果
         if (resultNumber != -1 && jigsawResult.size() == resultNumber) {
             return;
@@ -90,7 +95,50 @@ public class JigsawPuzzle {
                 }
             }
         }
-        //
+    }
+
+    public void backTrackingByBoard(int[][] board, int x, int y) {
+        // 如果已经到了没有空白位置，遍历完成
+        if (x == -1) {
+            jigsawResult.add(ArrayTool.deepCopyArray(board));
+            return;
+        }
+
+        // 遍历碎片
+        for (JigsawPiece jigsawPiece : jigsawPieceList) {
+            // 如果该碎片已经在使用，则跳过
+            if (jigsawPiece.isUsed()) {
+                continue;
+            }
+            // 遍历碎片到所有形状
+            for (int i = 0; i < jigsawPiece.getShapes().size(); i++) {
+                // 设置形状ID
+                jigsawPiece.setShapeId(i);
+                // 在当前位置尝试放置碎片
+                if (match2(board, jigsawPiece, x, y)) {
+                    // 渲染面板
+                    render(board, jigsawPiece);
+                    // 递归
+                    // 找到下一个空白坐标
+                    int[] start = nextStart(board, x, y);
+                    // 搜索下一个空白位置，并递归遍历
+                    backTrackingByBoard(board, start[0], start[1]);
+                    // 回溯
+                    recover(board, jigsawPiece);
+                }
+            }
+        }
+    }
+
+    public int[] nextStart(int[][] board, int x, int y) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == 0) {
+                    return new int[]{i, j};
+                }
+            }
+        }
+        return new int[]{-1, -1};
     }
 
     /** 检查拼图与当前位置是否匹配 */
@@ -114,6 +162,29 @@ public class JigsawPuzzle {
         return true;
     }
 
+    private boolean match2(int[][] board, JigsawPiece jigsawPiece, int br, int bc) {
+        int[][] piece = jigsawPiece.getShapes().get(jigsawPiece.getShapeId());
+        // 找到拼图碎片的第一行的第一个非0块
+        int[] pieceCoordinate = searchPieceCoordinate(piece);
+        // 重新适配坐标
+        if (br - pieceCoordinate[0] >= 0 && bc - pieceCoordinate[1] >= 0) {
+            return match(board, jigsawPiece, br - pieceCoordinate[0], bc - pieceCoordinate[1]);
+        } else {
+            return false;
+        }
+    }
+
+    private int[] searchPieceCoordinate(int[][] piece) {
+        for (int i = 0; i < piece.length; i++) {
+            for (int j = 0; j < piece[i].length; j++) {
+                if (piece[i][j] != 0) {
+                    return new int[]{i, j};
+                }
+            }
+        }
+        return new int[]{-1, -1};
+    }
+
     /** 渲染拼图碎片到面板上 */
     private void render(int[][] board, JigsawPiece jigsawPiece) {
         int[][] piece = jigsawPiece.getShapes().get(jigsawPiece.getShapeId());
@@ -127,6 +198,7 @@ public class JigsawPuzzle {
                 }
             }
         }
+        jigsawPiece.setUsed(true);
     }
 
     /** 从当前面板上恢复碎片位置的占用 */
@@ -144,6 +216,7 @@ public class JigsawPuzzle {
             }
         }
         jigsawPiece.clearCoordinate();
+        jigsawPiece.setUsed(false);
     }
 
     private void renderDateAndWall() {

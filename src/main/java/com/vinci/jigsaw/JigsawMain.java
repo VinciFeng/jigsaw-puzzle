@@ -18,7 +18,8 @@ public class JigsawMain {
         JigsawPuzzle jigsawPuzzle = new JigsawPuzzle();
         jigsawPuzzle.showInitBoard();
         long start = System.currentTimeMillis();
-        jigsawPuzzle.searchResult();
+//        jigsawPuzzle.searchResult(100);
+        jigsawPuzzle.searchResultScanBoard();
         logger.info(JigsawConstant.THE_USED_TIME, (System.currentTimeMillis() - start));
         jigsawPuzzle.showResult();
     }
