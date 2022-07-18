@@ -1,19 +1,21 @@
 package com.vinci.jigsaw.component;
 
+import com.vinci.jigsaw.constant.JigsawConstant;
 import com.vinci.jigsaw.tool.ArrayTool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * 拼图游戏
  * @author Vinci
  * @date 2022/07/14
  */
 public class JigsawPuzzle {
 
-    private final LocalDate jigsawDate;
+    private static final Logger logger = LoggerFactory.getLogger(JigsawPuzzle.class);
 
     private final JigsawBoard jigsawBoard;
 
@@ -22,69 +24,84 @@ public class JigsawPuzzle {
     private final List<int[][]> jigsawResult;
 
     public JigsawPuzzle() {
-        this.jigsawDate = LocalDate.now();
-        this.jigsawBoard = new JigsawBoard().setDate(jigsawDate);
+        this.jigsawBoard = new JigsawBoard().setDate(LocalDate.now());
         this.jigsawPieceList = new JigsawPieceList().getPieceList();
         this.jigsawResult = new LinkedList<>();
     }
 
-    public void search() {
-        backTracking(jigsawResult, jigsawBoard.getBoard(), 0);
+    public JigsawPuzzle(LocalDate localDate) {
+        this.jigsawBoard = new JigsawBoard().setDate(localDate);
+        this.jigsawPieceList = new JigsawPieceList().getPieceList();
+        this.jigsawResult = new LinkedList<>();
     }
 
+    /** 默认搜索10条结果 */
+    public void searchResult() {
+        search(JigsawConstant.DEFAULT_RESULT_NUMBER);
+    }
 
-    public void backTracking(List<int[][]> result, int[][] board, int pieceId) {
-        // 终止条件
+    /** 搜索指定数目结果 */
+    public void searchResult(int resultNumber) {
+        search(resultNumber);
+    }
+
+    /** 搜索所有结果 */
+    public void searchAllResult() {
+        search(JigsawConstant.ALL_RESULT_NUMBER);
+    }
+
+    public void search(int resultNumber) {
+        backTracing(jigsawBoard.getBoard(), 0, resultNumber);
+        renderDateAndWall();
+    }
+
+    public void backTracing(int[][] board, int pieceId, int resultNumber) {
+        // 终止条件1，如果遍历完了最后一个拼图
         if (pieceId >= jigsawPieceList.size()) {
-            result.add(ArrayTool.deepCopyArray(board));
+            // 深拷贝解决方案，添加到解的集合中
+            jigsawResult.add(ArrayTool.deepCopyArray(board));
+            return;
         }
-        // 遍历每一个拼图块
-        for (int i = 0; i < jigsawPieceList.size(); i++) {
-            // 遍历每一个形状
-            JigsawPiece jigsawPiece = jigsawPieceList.get(i);
-            List<int[][]> shapes = jigsawPiece.getShapes();
-            // 返回放置碎片的位置，若没有则会为默认的负值
-            int[] local = new int[]{-1, -1};
-            for (int j = 0; j < shapes.size(); j++) {
-                int[] location = location(board, shapes.get(j), i, local);
-                if (location[0] >= 0) {
-                    jigsawPiece.setShapeId(j);
-                    break;
-                }
-            }
-            // 选择
-
-
-            // 递归
-
-            // 回退
-
+        // 终止条件2，判断当前是否有过小的孤岛
+//        if (!ArrayTool.islandChecked(ArrayTool.deepCopyArray(board))) {
+//            return;
+//        }
+        // 终止条件3，判断是否已经搜索到足够数目的结果
+        if (resultNumber != -1 && jigsawResult.size() == resultNumber) {
+            return;
         }
-    }
-
-    public int[] location(int[][] board, int[][] piece, int pieceId, int[] res) {
-        // 遍历位置
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                if (check(board, piece, i, j, pieceId)) {
-                    res[0] = i;
-                    res[1] = j;
-                    break;
+        // 获取当前的拼图碎片
+        JigsawPiece jigsawPiece = jigsawPieceList.get(pieceId);
+        // 遍历所有形状
+        for (int i = 0; i < jigsawPiece.getShapes().size(); i++) {
+            // 设置形状ID
+            jigsawPiece.setShapeId(i);
+            for (int j = 0; j < board.length; j++) {
+                for (int k = 0; k < board[j].length; k++) {
+                    // 如果匹配上了，做选择
+                    if (match(board, jigsawPiece, j, k)) {
+                        // 渲染面板
+                        render(board, jigsawPiece);
+                        // 递归
+                        backTracing(board, pieceId + 1, resultNumber);
+                        // 回溯
+                        recover(board, jigsawPiece);
+                    }
                 }
             }
         }
-        return res;
+        //
     }
 
-    /** 判断拼图碎片放置的合法性 */
-    public boolean check(int[][] board, int[][] piece, int br, int bc, int pieceId) {
+    /** 检查拼图与当前位置是否匹配 */
+    private boolean match(int[][] board, JigsawPiece jigsawPiece, int br, int bc) {
+        int[][] piece = jigsawPiece.getShapes().get(jigsawPiece.getShapeId());
         int pr = piece.length;
         int pc = piece[0].length;
-        // 边界判断
-        if (br + pr >= board.length || bc + pc >= board[0].length) {
+        // 边界检查判断
+        if (br + pr - 1 >= board.length || bc + pc - 1 >= board[0].length) {
             return false;
         }
-        // 判断是否能匹配拼图到面板上
         for (int i = 0; i < pr; i++) {
             for (int j = 0; j < pc; j++) {
                 if (piece[i][j] != 0 && board[br + i][bc + j] != 0) {
@@ -92,42 +109,79 @@ public class JigsawPuzzle {
                 }
             }
         }
-        // 渲染拼图到面板上
-        for (int i = 0; i < pr; i++) {
-            for (int j = 0; j < pc; j++) {
-                if (piece[i][j] != 0) {
-//                    board[br + i][bc + j] = piece[i][j];
-                    board[br + i][bc + j] = pieceId + 1;
-                }
-            }
-        }
-        // 校验孤岛剪枝
-        if (!checkBoard(ArrayTool.deepCopyArray(board))) {
-            // 如果不满足要求，则恢复面板
-            for (int i = 0; i < pr; i++) {
-                for (int j = 0; j < pc; j++) {
-                    if (piece[i][j] != 0) {
-                        board[br + i][bc + j] = 0;
-                    }
-                }
-            }
-            return false;
-        }
+        // 设置坐标位置
+        jigsawPiece.setCoordinate(new int[]{br, bc});
         return true;
     }
 
-    /** 检查孤岛面积是否符合符合拼图要求 */
-    public boolean checkBoard(int[][] board) {
-
-        return false;
+    /** 渲染拼图碎片到面板上 */
+    private void render(int[][] board, JigsawPiece jigsawPiece) {
+        int[][] piece = jigsawPiece.getShapes().get(jigsawPiece.getShapeId());
+        int pr = piece.length;
+        int pc = piece[0].length;
+        int[] coordinate = jigsawPiece.getCoordinate();
+        for (int i = 0; i < pr; i++) {
+            for (int j = 0; j < pc; j++) {
+                if (piece[i][j] != 0) {
+                    board[coordinate[0] + i][coordinate[1] + j] = jigsawPiece.getPieceID();
+                }
+            }
+        }
     }
 
-
-    public static void main(String[] args) {
-        JigsawPuzzle jigsawPuzzle = new JigsawPuzzle();
-//        jigsawPuzzle.showBoard();
-//        // jigsawPuzzle.setDate(LocalDate.of(2022, 8, 2));
-//        jigsawPuzzle.setDate();
-//        jigsawPuzzle.showBoard();
+    /** 从当前面板上恢复碎片位置的占用 */
+    private void recover(int[][] board, JigsawPiece jigsawPiece) {
+        int[][] piece = jigsawPiece.getShapes().get(jigsawPiece.getShapeId());
+        int pr = piece.length;
+        int pc = piece[0].length;
+        int br = jigsawPiece.getCoordinate()[0];
+        int bc = jigsawPiece.getCoordinate()[1];
+        for (int i = 0; i < pr; i++) {
+            for (int j = 0; j < pc; j++) {
+                if (piece[i][j] != 0) {
+                    board[br + i][bc + j] = 0;
+                }
+            }
+        }
+        jigsawPiece.clearCoordinate();
     }
+
+    private void renderDateAndWall() {
+        renderDate();
+        renderWall();
+    }
+
+    private void renderDate() {
+        for (int[][] board : jigsawResult) {
+            LocalDate date = LocalDate.now();
+            int[] month = jigsawBoard.getMonths().get(date.getMonthValue());
+            int[] dayOfMonth = jigsawBoard.getDayOfMonths().get(date.getDayOfMonth());
+            int[] dayOfWeek = jigsawBoard.getDayOfWeeks().get(date.getDayOfWeek().getValue());
+            board[month[0]][month[1]] = JigsawConstant.RENDER_DATE_VALUE;
+            board[dayOfMonth[0]][dayOfMonth[1]] = JigsawConstant.RENDER_DATE_VALUE;
+            board[dayOfWeek[0]][dayOfWeek[1]] = JigsawConstant.RENDER_DATE_VALUE;
+        }
+    }
+
+    private void renderWall() {
+        for (int[][] board : jigsawResult) {
+            for (int[] wall : jigsawBoard.getWalls()) {
+                board[wall[0]][wall[1]] = JigsawConstant.RENDER_WALL_VALUE;
+            }
+        }
+    }
+
+    /** 打印游戏的初始面板 */
+    public void showInitBoard() {
+        jigsawBoard.showBoard();
+    }
+
+    /** 打印所有结果 */
+    public void showResult() {
+        for (int i = 0; i < jigsawResult.size(); i++) {
+            logger.info(JigsawConstant.THE_TH_SOLUTION, i + 1);
+            ArrayTool.printArray(jigsawResult.get(i));
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.vinci.jigsaw.tool;
 
+import com.vinci.jigsaw.constant.JigsawConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,5 +71,33 @@ public class ArrayTool {
         for (int[] line : array) {
             logger.info("{}", line);
         }
+    }
+
+    /** 孤岛检查 */
+    public static boolean islandChecked(int[][] board) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == 0) {
+                    int area = dfs(i, j, board);
+                    if (area > 0 && area < JigsawConstant.DEFAULT_MIN_ISLAND_CHECKED_THRESHOLD) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private static int dfs(int i, int j, int[][] grid) {
+        if (i < 0 || j < 0 || i >= grid.length || j >= grid[i].length || grid[i][j] == 1) {
+            return 0;
+        }
+        grid[i][j] = 1;
+        int num = 1;
+        num += dfs(i + 1, j, grid);
+        num += dfs(i - 1, j, grid);
+        num += dfs(i, j + 1, grid);
+        num += dfs(i, j - 1, grid);
+        return num;
     }
 }

@@ -1,6 +1,6 @@
 package com.vinci.jigsaw.component;
 
-import com.vinci.jigsaw.constant.JigsawLogConstant;
+import com.vinci.jigsaw.constant.JigsawConstant;
 import com.vinci.jigsaw.tool.ArrayTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 拼图面板类
  * @author Vinci
  * @date 2022/07/14
  */
@@ -28,6 +27,8 @@ public class JigsawBoard {
 
     private Map<Integer, int[]> dayOfWeeks;
 
+    private int[][] walls;
+
     /** 构造初始化 */
     public JigsawBoard() {
         // 初始化面板
@@ -36,7 +37,7 @@ public class JigsawBoard {
         initWall();
         // 初始化日期坐标
         initCoordinate();
-        logger.info(JigsawLogConstant.INIT_JIGSAW_BOARD);
+        logger.info(JigsawConstant.INIT_JIGSAW_BOARD);
     }
 
     /** 拼图面板初始化 */
@@ -51,12 +52,12 @@ public class JigsawBoard {
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},
         };
-        logger.info(JigsawLogConstant.INIT_ORIGINAL_BOARD);
+        logger.info(JigsawConstant.INIT_ORIGINAL_BOARD);
     }
 
     // 初始化墙体
     public void initWall() {
-        int[][] walls = {
+        walls = new int[][]{
                 {0, 6},
                 {1, 6},
                 {7, 0},
@@ -69,9 +70,9 @@ public class JigsawBoard {
 
     public void initWall(int[][] walls) {
         for (int[] wall : walls) {
-            board[wall[0]][wall[1]] = 1;
+            board[wall[0]][wall[1]] = JigsawConstant.INIT_WALL_VALUE;
         }
-        logger.info(JigsawLogConstant.INIT_WALL);
+        logger.info(JigsawConstant.INIT_WALL);
     }
 
     /** 日期坐标初始化 */
@@ -92,7 +93,7 @@ public class JigsawBoard {
         for (int i = 4; i <= 6; i++) {
             dayOfWeeks.put(i, new int[]{7, i});
         }
-        logger.info(JigsawLogConstant.INIT_DATE_COORDINATE);
+        logger.info(JigsawConstant.INIT_DATE_COORDINATE);
     }
 
     /** 设置日期占位 */
@@ -106,10 +107,10 @@ public class JigsawBoard {
         int[] month = months.get(date.getMonthValue());
         int[] dayOfMonth = dayOfMonths.get(date.getDayOfMonth());
         int[] dayOfWeek = dayOfWeeks.get(date.getDayOfWeek().getValue());
-        board[month[0]][month[1]] = 1;
-        board[dayOfMonth[0]][dayOfMonth[1]] = 1;
-        board[dayOfWeek[0]][dayOfWeek[1]] = 1;
-        logger.info(JigsawLogConstant.FINISHED_DATE_SETTING);
+        board[month[0]][month[1]] = JigsawConstant.INIT_DATE_VALUE;
+        board[dayOfMonth[0]][dayOfMonth[1]] = JigsawConstant.INIT_DATE_VALUE;
+        board[dayOfWeek[0]][dayOfWeek[1]] = JigsawConstant.INIT_DATE_VALUE;
+        logger.info(JigsawConstant.FINISHED_DATE_SETTING);
         return this;
     }
 
@@ -119,8 +120,49 @@ public class JigsawBoard {
 
     /** 显示拼图面板 */
     public void showBoard() {
-        logger.info(JigsawLogConstant.SHOW_JIGSAW_BOARD_HEAD);
+        logger.info(JigsawConstant.SHOW_JIGSAW_BOARD_HEAD);
         ArrayTool.printArray(board);
-        logger.info(JigsawLogConstant.SHOW_JIGSAW_BOARD_TAIL);
+        logger.info(JigsawConstant.SHOW_JIGSAW_BOARD_TAIL);
+    }
+
+    public Map<Integer, int[]> getMonths() {
+        return months;
+    }
+
+    public JigsawBoard setMonths(Map<Integer, int[]> months) {
+        this.months = months;
+        return this;
+    }
+
+    public Map<Integer, int[]> getDayOfMonths() {
+        return dayOfMonths;
+    }
+
+    public JigsawBoard setDayOfMonths(Map<Integer, int[]> dayOfMonths) {
+        this.dayOfMonths = dayOfMonths;
+        return this;
+    }
+
+    public Map<Integer, int[]> getDayOfWeeks() {
+        return dayOfWeeks;
+    }
+
+    public JigsawBoard setDayOfWeeks(Map<Integer, int[]> dayOfWeeks) {
+        this.dayOfWeeks = dayOfWeeks;
+        return this;
+    }
+
+    public JigsawBoard setBoard(int[][] board) {
+        this.board = board;
+        return this;
+    }
+
+    public int[][] getWalls() {
+        return walls;
+    }
+
+    public JigsawBoard setWalls(int[][] walls) {
+        this.walls = walls;
+        return this;
     }
 }

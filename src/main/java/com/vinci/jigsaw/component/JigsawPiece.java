@@ -1,5 +1,6 @@
 package com.vinci.jigsaw.component;
 
+import com.vinci.jigsaw.constant.JigsawConstant;
 import com.vinci.jigsaw.tool.ArrayTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,9 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 拼图碎片类
  * @author Vinci
- * @date 111/01/11
+ * @date 2022/07/14
  */
 public class JigsawPiece {
 
@@ -20,15 +20,20 @@ public class JigsawPiece {
 
     private List<int[][]> shapes;
 
+    private int pieceID;
+
     private int shapeId;
 
-    /** 构造方法默认不翻转 */
+    private int[] coordinate;
+
+    /** 构造方法默认翻转 */
     public JigsawPiece(int[][] shape) {
-        this(shape, false);
+        this(shape, true);
     }
 
     /** 构造方法自定义是否翻转 */
     public JigsawPiece(int[][] shape, boolean withFlip) {
+        this.coordinate = JigsawConstant.DEFAULT_COORDINATE;
         this.baseShape = ArrayTool.deepCopyArray(shape);
         this.shapes = new ArrayList<>();
         if (withFlip) {
@@ -79,11 +84,34 @@ public class JigsawPiece {
         return shapes;
     }
 
+    public int getPieceID() {
+        return pieceID;
+    }
+
+    public JigsawPiece setPieceID(int pieceID) {
+        this.pieceID = pieceID;
+        return this;
+    }
+
     public int getShapeId() {
         return shapeId;
     }
 
-    public void setShapeId(int shapeId) {
+    public JigsawPiece setShapeId(int shapeId) {
         this.shapeId = shapeId;
+        return this;
+    }
+
+    public int[] getCoordinate() {
+        return coordinate;
+    }
+
+    public JigsawPiece setCoordinate(int[] coordinate) {
+        this.coordinate = coordinate;
+        return this;
+    }
+
+    public void clearCoordinate() {
+        this.coordinate = JigsawConstant.DEFAULT_COORDINATE;
     }
 }
